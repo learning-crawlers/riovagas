@@ -137,7 +137,7 @@ while True and i <= 5:
 
 browser.quit()
 
-# threading - acessando de forma assíncrona para ganhar tempo
+# threading no python para executar mais rápido (de forma assíncrona)
 with ThreadPoolExecutor() as executor:
 	futures = { executor.submit(salvarVaga, url): url for url in links } 
 	for thread in as_completed(futures):
