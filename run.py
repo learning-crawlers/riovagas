@@ -140,8 +140,8 @@ browser.quit()
 # threading - acessando de forma assíncrona para ganhar tempo
 with ThreadPoolExecutor() as executor:
 	futures = { executor.submit(salvarVaga, url): url for url in links } 
-	for future in as_completed(futures):
+	for thread in as_completed(futures):
 		try:
-			future.result()
-		except Exception as er:
-			print(er)
+			thread.result()
+		except Exception as e:
+			print(e)
