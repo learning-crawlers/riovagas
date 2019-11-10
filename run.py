@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #######################################
-##  STF Remuneração 
-##    Lista de remuneração de servidores ativos do stf com nome, cargo, fc/cj, bruto (R$), líquido (R$)
+##  RioVagas Empregos 
+##    Busca de empregos no riovagas com url, cargo, ramo, salario, local, contratacao, data
 ##
 ##    Author: Alex Benincasa Santos 
 ##    Mail: alexbenincasa@ymail.com
@@ -20,7 +20,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from concurrent.futures import ThreadPoolExecutor,as_completed
 
 # caminho para o binário do geckodriver.exe
-bin_path = 'C:\\www\\olx-empregos\\geckodriver.exe'
+bin_path = 'C:\\www\\riovagas\\geckodriver.exe'
 
 # função para pegar os dados do emprego
 def salvarVaga(url):
@@ -35,6 +35,7 @@ def salvarVaga(url):
 		anuncio = browser.find_element_by_css_selector('article.post')
 		entry_title = anuncio.find_element_by_css_selector('h1.entry-title').text
 
+		# geralmente cargo, salário e local vem separado por " – " (travessão)
 		if ' – ' not in entry_title:
 			raise ValueError(f'[{entry_title}] Vaga sem valor de salário')
 
@@ -51,6 +52,7 @@ def salvarVaga(url):
 			salario = info[2]
 			local = info[3]
 
+			# em algumas vagaas sem ramo podem vir a quantidade de vagas
 			if 'R$' in ramo:
 				cargo = info[0]
 				ramo = ''
@@ -69,6 +71,7 @@ def salvarVaga(url):
 		if 'R$' not in salario:
 			raise ValueError(f'[{entry_title}] Vaga sem valor de salário')
 
+		# o hash vai identificar a vaga
 		hash = 'data/'+hashlib.sha224(anuncio.text.strip().encode('utf-8')).hexdigest()
 		fname = hash+f'-{cargo}-{salario}-{local}.json'.lower()
 		if os.path.isfile(fname):
@@ -88,6 +91,7 @@ def salvarVaga(url):
 			if 'Regime de Contratação' in info.text:
 				vaga['Contratacao'] = info.text.split(':')[1].strip()
 
+			# mais informação sobre o local da vaga
 			if 'Bairro' in info.text:
 				if local != info.text.split(':')[1].strip():
 					bairro = info.text.split(':')[1].strip()
@@ -100,6 +104,7 @@ def salvarVaga(url):
 
 		browser.quit()
 
+		# salvar o arquivo com os dados da vaga
 		with open(fname, mode="w") as f:
 			f.write(json.dumps(vaga, indent=4))
 
@@ -122,6 +127,7 @@ while True and i <= 5:
 	for el in browser.find_elements_by_css_selector('article.post'):
 		links.append(el.find_element_by_css_selector('h2.entry-title a').get_attribute('href'))
 
+	# mágica da paginação infinita
 	try:
 		browser.find_element_by_css_selector('a.next.page-numbers').click()
 	except:
@@ -131,6 +137,7 @@ while True and i <= 5:
 
 browser.quit()
 
+# threading - acessando de forma assíncrona para ganhar tempo
 with ThreadPoolExecutor() as executor:
 	futures = { executor.submit(salvarVaga, url): url for url in links } 
 	for future in as_completed(futures):
