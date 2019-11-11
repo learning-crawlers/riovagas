@@ -124,7 +124,7 @@ browser.get('https://riovagas.com.br/category/riovagas/')
 
 links = []
 i = 1
-while True and i <= 5:
+while True and i <= 25:
 	for el in browser.find_elements_by_css_selector('article.post'):
 		links.append(el.find_element_by_css_selector('h2.entry-title a').get_attribute('href'))
 
