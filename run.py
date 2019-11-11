@@ -78,18 +78,19 @@ def salvarVaga(url):
 			raise ValueError(f'[{entry_title}] Vaga já foi cadastrada')
 
 		vaga = {}
-		vaga['Url'] = url.strip()
-		vaga['Cargo'] = cargo.strip()
-		vaga['Ramo'] = ramo.strip()
-		vaga['Salario'] = salario.strip()
-		vaga['Local'] = local.strip()
-		vaga['Contratacao'] = ''
+		vaga['fonte'] = 'RioVagas'
+		vaga['url'] = url.strip()
+		vaga['cargo'] = cargo.strip()
+		vaga['ramo'] = ramo.strip()
+		vaga['salario'] = salario.strip()
+		vaga['local'] = local.strip()
+		vaga['contratacao'] = ''
 
 		bairro = None
 
 		for info in anuncio.find_elements_by_css_selector('p'):
 			if 'Regime de Contratação' in info.text:
-				vaga['Contratacao'] = info.text.split(':')[1].strip()
+				vaga['contratacao'] = info.text.split(':')[1].strip()
 
 			# mais informação sobre o local da vaga
 			if 'Bairro' in info.text:
@@ -97,10 +98,10 @@ def salvarVaga(url):
 					bairro = info.text.split(':')[1].strip()
 
 		data_publicacao = anuncio.find_element_by_css_selector('time').get_attribute('datetime')
-		vaga['Data'] = data_publicacao.strip()
+		vaga['data'] = data_publicacao.strip()
 
 		if bairro:
-			vaga['Local'] += ' - '+bairro
+			vaga['local'] += ' - '+bairro
 
 		# salvar o arquivo com os dados da vaga
 		with open(fname, mode="w") as f:
