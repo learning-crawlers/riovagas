@@ -102,11 +102,11 @@ def salvarVaga(url):
 		if bairro:
 			vaga['Local'] += ' - '+bairro
 
-		browser.quit()
-
 		# salvar o arquivo com os dados da vaga
 		with open(fname, mode="w") as f:
 			f.write(json.dumps(vaga, indent=4))
+
+		browser.quit()
 
 	except Exception as e:
 		print(f'[{entry_title}] ERRO')
