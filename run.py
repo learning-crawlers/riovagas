@@ -73,7 +73,7 @@ def salvarVaga(url):
 
 		# o hash vai identificar a vaga
 		hash = 'data/'+hashlib.sha224(anuncio.text.strip().encode('utf-8')).hexdigest()
-		fname = hash+f'-{cargo}-{salario}-{local}.json'.lower()
+		fname = hash+(f'-{cargo}-{salario}-{local}.json'.lower().replace('/',''))
 		if os.path.isfile(fname):
 			raise ValueError(f'[{entry_title}] Vaga já foi cadastrada')
 
