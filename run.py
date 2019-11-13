@@ -110,9 +110,8 @@ def salvarVaga(url):
 		browser.quit()
 
 	except Exception as e:
-		print(f'[{entry_title}] ERRO')
-		print(e)
 		browser.quit()
+		print(f'[{entry_title}] '+str(e))
 
 	exit()
 
