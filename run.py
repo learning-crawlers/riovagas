@@ -11,6 +11,7 @@
 import os
 import time
 import json
+import platform
 import hashlib
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -19,8 +20,20 @@ from selenium.webdriver.common.by import By as by
 from selenium.webdriver.support.ui import WebDriverWait
 from concurrent.futures import ThreadPoolExecutor,as_completed
 
+
 # caminho para o binário do geckodriver.exe
-bin_path = 'C:\\www\\riovagas\\geckodriver.exe'
+if platform.system() == 'Linux':
+	from os.path import realpath, dirname, join
+	ROOT = realpath(dirname(__file__))
+	BIN_PATH = join(ROOT, 'bin')
+	bin_path = BIN_PATH
+	from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+	cap = DesiredCapabilities().FIREFOX
+	cap["marionette"] = False
+	os.environ["PATH"] = f'{os.environ["PATH"]}:{bin_path}'
+else:
+	bin_path = 'C:\\www\\riovagas\\geckodriver.exe'
+	cap = None
 
 # função para pegar os dados do emprego
 def salvarVaga(url):
@@ -28,7 +41,7 @@ def salvarVaga(url):
 		options = Options()
 		options.headless = True
 		
-		browser = webdriver.Firefox(executable_path=bin_path, options=options)
+		browser = webdriver.Firefox(executable_path=bin_path, options=options,capabilities=cap)
 		wait = WebDriverWait(browser, 15)
 		browser.get(url)
 
