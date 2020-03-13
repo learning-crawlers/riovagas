@@ -1,3 +1,5 @@
+[![HitCount](http://hits.dwyl.com/learning-crawlers/riovagas.svg)](http://hits.dwyl.com/learning-crawlers/riovagas)
+
 # RioVagas Empregos
 
 Extração de dados com Selenium para encontrar empregos no RioVagas
